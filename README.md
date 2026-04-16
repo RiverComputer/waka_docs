@@ -21,6 +21,10 @@ Operationally, it is **a coordination interface for the creation and management 
 
 *Waka* *(te reo Māori)* — a canoe. A vessel that carries people and knowledge. The name is a working name, taken deliberately from the collaborative context in which the project was developed: a shared craft assembled by many hands, carrying the records, practices, and claims of the communities that travel in it. All example projects in the video demonstrations are real and under active development. Waka is being built in relational integrity with the communities, stewards, and institutions it is designed to serve — not as a technology in search of a use case.
 
+**Waka** is deployed at **[waka-six.vercel.app](https://waka-six.vercel.app)**
+
+**[Kiwaatule Sandbox Project — waka-six.vercel.app/share/kiwaatule-2030](https://waka-six.vercel.app/share/kiwaatule-2030?view=feed)** — a read-only public snapshot of the Nalubaga-Validate Community project. The sandbox includes the full graph view, claims feed, and map. This is for viewing and demonstration purposes only — you cannot write to Waka, expand resources, or download attachments from this view. All data shown is from a real project under active development.
+
 ---
 
 ## What Waka is for
@@ -137,14 +141,6 @@ Six short videos introduce the system end-to-end (~5 minutes each):
 All example projects in these walkthroughs are real and under active development.
 
 ---
-
-## Public demo
-
-A read-only public snapshot of the Nalubaga-Validate Community project is available at:
-
-**[waka-six.vercel.app/share/kiwaatule-2030](https://waka-six.vercel.app/share/kiwaatule-2030)**
-
-The demo includes the full graph view, claims feed, and map, with all write actions disabled.
 
 ---
 

@@ -1,155 +1,202 @@
 # Waka — Technical Position
 
-A short technical position document, designed to be linkable from the project website alongside the [README](./README.md).
+This is the technical companion to the [Conceptual Position](./CONCEPTUAL_POSITION.md). The conceptual position says what Waka is and who it is for; this one accounts for what it is built on — the open standards underneath it, the three layers those standards compose into, the lexicon space the claims layer plugs into, and the roadmap toward programmable remittance. Read the conceptual position first.
 
 ---
 
-## Posture: resistance to platform and protocol lock-in
+## Built on the open standards of the web
 
-Waka is built to **resist platform or protocol lock-in** while following a common data model that ensures maximum **interoperability, extensibility, and discoverability** with concurrent projects in the impact accounting, evaluation, and regional financing ecosystem.
+Interoperable, protocol-agnostic software cannot be assembled on top of a proprietary account system. It has to be built at the most elemental, open-standard level of the web — the layer of identifiers, signatures, and data shapes that no single company owns. A great deal of Web3, and a great deal of the impact-evaluation tooling adjacent to it, has failed this test in the same way: each project asks the user to create a new login, or to adopt one more app, and the data that project produces then lives inside the app and dies with it. Nothing built that way is portable, and nothing portable can be built that way.
 
-Choosing to anchor across a range of protocol substrates is a **feature, not a bug**. It lets each protocol do what it does best, and it prevents any single substrate from becoming load-bearing for the whole system.
+Waka is built on the protocols that are foundational to the design and implementation of the internet rather than on an account: Decentralized Identifiers (DIDs) for identity, the Verifiable Credentials (VC) data model for signed assertions, AT Protocol primitives — the Personal Data Server, `did:plc`, CGS, and CEL — for publication and machine evaluation, and the Hypercerts v2 lexicon space for the shape of a claim. Anchoring a record across several of these substrates rather than one is deliberate: each substrate does what it does best, and no single one becomes load-bearing for the whole system.
 
-Waka assembles the following substrates under a common data model:
+Earlier iterations of Waka were built foundationally on DIDs and the VC data model alone. The current version takes the AT Protocol primitives as more foundational, without compromising the versatility of identity login or of anchoring and issuance: the VC data model has been tucked inside the content of a claim, where it still carries cross-DID portability, now inside a more operationally mature publication substrate. Adopting Hypercerts v2 lexicons at the outer layer and publishing `eco.waka.*` extensions for Waka's novel layers keeps the project a standards participant rather than a standards captive.
+
+---
+
+## The three layers
+
+Waka is three layers, and every feature in the system belongs to one of them.
+
+- **The identity layer.** Authentication across any wallet and any DID method; the application session is a convenience for using the product, and the DID is the identity that signs records and survives the product.
+- **The claims layer.** The middle of the system: a claim is a subject plus an accreting set of signed witness records, and the claims engine is the machinery that composes human and machine witnessing into those records.
+- **The anchoring and issuance layer.** Durable storage, sovereign publication, on-chain triggers, ecological anchoring, and portable evaluation records — spread across substrates so that none becomes load-bearing and a record can be carried into the systems downstream that need it.
+
+The identity layer and the anchoring layer are held to the same constraint — maximum versatility at both ends — so that the claims layer in the middle is never bound to a single protocol substrate. The sections that follow take each layer in turn, with the most depth on the middle one: the claim object itself, the Hypercerts v2 lexicon space it plugs into, and the witness engine that produces it.
+
+---
+
+## The identity layer — DIDs
+
+A Decentralized Identifier is a globally resolvable identifier whose holder controls it, independent of any registrar or platform. Waka uses DIDs as the root of identity: it treats the application session — currently a Supabase session — as a convenience, and the DID as the thing that actually signs a record. The floor is `did:pkh`, which derives a DID directly from a wallet address and requires no infrastructure at all, so every wallet user already has one; richer methods — `did:plc`, `did:key`, `did:ethr`, and others — sit above that floor and are adopted only when a project needs what they offer. One person can attach several DID-based signing contexts to a single session and sign with a MetaMask key, a Keplr key, or an AT-Protocol identity as the context calls for.
+
+Critical to the structure of this identity layer is `did:plc`. It is the AT-Protocol-native DID method — a self-authenticating, key-rotatable identifier backed by a public log — and its relevance here is that a record signed under a `did:plc` identity is automatically indexable by the Hypercerts v2 stack, which treats `did:plc` as its addressing primitive. Publishing under `did:plc` is therefore what lets a Waka record appear as a first-class object in the Hypercerts ecosystem rather than as a foreign import, and it costs the wallet user nothing: a project can adopt `did:plc` at the publishing layer while its members continue to log in with `did:pkh`.
+
+Groups carry DIDs as well. Organizations and projects are issued group `did:plc` identifiers through CGS — AT Protocol's Certified Group Service — so that a collective subject, an organization or a stewardship project, can sign claims on its own behalf. A group identity does not replace the individual identities underneath it; it is composed from them, and the members still log in with any wallet. The result is a nested-container model — an organization DID over a project DID over the user DIDs — in which the project-level DID is the endpoint a covenant or other legal instrument can point at.
+
+---
+
+## The claims layer — verifiable credentials, extended
+
+The Verifiable Credentials data model is conventionally used to make assertions about an identity: an issuer says a subject holds an attribute, a holder presents the credential, and a verifier checks it, all secured by public/private-key signing. Waka takes that same machinery and points it at data subjects instead. A claim in Waka is a subject — an activity, an observation, a decision — together with an accreting set of witness records, each one a VC-shaped attestation signed by a DID and carrying the method by which the witnessing was done. The defining property of the VC model carries over: a range of different witness processes can be deployed against the same subject, and the proof travels with the record.
+
+Because the VC data model lives inside the content of the claim, a witness record signed under one DID method stays verifiable when the claim is read in a context built around another. A claim therefore carries three things together — its evidence (the linked resources), its method of verification (which witness processes were applied, by whom or by what), and its signatures (the DID-signed witness records) — so anyone reading it can see what was asserted and who or what stood behind the assertion, without having to ask. Repurposing verifiable credentials this way — witness over data subjects as a design space for verification, rather than attribute assertion about identities — is one of Waka's novel contributions; the witness engine described below is its implementation.
+
+---
+
+## The Hypercerts v2 lexicon space
+
+Waka does not invent the shape of a claim. The notion of a claim corresponds to the **activity** lexicon of Hypercerts v2, and the VC-extended witness model described above is, in lexicon terms, an extension of the **evaluation** namespace of Hypercerts v2: Waka publishes `eco.waka.*` lexicons for the layers Hypercerts v2 does not yet cover — the witness taxonomy, covenant trigger attestations, and ecological institution containers — as a peer contributor to that namespace rather than a subordinate app.
+
+What makes this more than lexicon housekeeping is the mode it runs in. Hypercerts v2 is AT-Protocol-native; Waka conforms to its data shape but does so in a **DID-protocol-agnostic** mode, which means the same claim can be authenticated, anchored, and issued into Web3 systems — Ethereum attestations, on-chain registries, smart contracts — and not only into AT Protocol. Waka therefore does three things at once: it conforms to the data shape of Hypercerts v2; it extends the evaluation class of that shape through the claims engine; and it opens a more versatile authentication, anchoring, and issuance space around the shape than the AT-Protocol-native context provides on its own.
+
+Two consequences follow. First, a Waka claim is cross-compatible with crediting, certification, and Hypercerts registries out of the box — the same durable object can be read by an ecological-credit registry, a certification body, and a Hypercerts indexer, each applying its own rubric. Second, the shape makes a new generation of Ethereum smart contracts possible: contracts whose conditions are evaluated against witnessed, portable claims produced by systems like Waka, rather than against ad-hoc oracles.
+
+---
+
+## The claims engine — composable witness methods
+
+The composable witness system is under active development. At its root it does one thing: it lets human witness and machine witness be composed into dynamic validation and verification systems, configured per context rather than fixed in advance.
+
+The distinction it composes across is the one to start from. **Human-based validation** is, broadly, attestation — a person or group asserting something — and it is usually one of three things: role-based, grounded in a proof of authority, or a peer review with no role constraint at all. **Machine-based validation** falls into conformance (does this input satisfy a rule or schema), queries (does this corpus answer this question), and, increasingly, the use of agents to validate particular assertions or claims against bodies of information. Most verification systems pick one of these and build around it. The claims engine treats them as primitives instead: combine human and machine witness in whatever proportion a context calls for, and you can reconstruct almost any existing form of verification — peer review, a participatory guarantee system, an expert audit, a methodology-conformance check, an algorithmic review — and compose several of them on the same claim.
+
+Within the two classes, the methods Waka exposes are:
+
+- **Human witness** — *peer review* (multiple witnesses, no role constraint), *participatory guarantee system* (quorum-based group attestation), *expert review* (a single credentialed auditor), *self-attestation* (the originator asserting their own claim). This is where credentials and proof of authority enter the system.
+- **Machine witness** — *CEL expression evaluation* (deterministic rule checks over measurements), *schema conformance* (scoring raw input against a registered methodology, e.g. an MRV schema), *checksum / content-hash verification* (tamper-evidence as a first-class witness method), *AI classification and query* (model-based evaluation with confidence scores), *algorithmic review agents* (composable checks with verifiable inputs).
+
+Underneath the catalog is the design-space argument. Deciding what counts as valid input — measured against established methods, schemas, certification standards, or lines of authority — is itself a design space, and treating it as one is the proposition. In practice a project can design the space of authority around its data: who is authorized to witness, by which method, with what quorum or weight — letting local and external stakeholders enter into structured collaborations around the auditing and verification of the data, with the originators of the data included as far as possible. The political question (who gets to say) and the technical question (by what method) are answered together, per context, inside the engine. Human–machine interaction at the verification layer, composed this way, is Waka's principal extension to the Hypercerts v2 evaluation namespace.
+
+---
+
+## The anchoring and issuance layer — substrate roles
+
+Anchoring is spread deliberately across substrates so that each does what it does best and none becomes load-bearing:
 
 | Layer | Substrate | Role |
 |---|---|---|
-| Identity container | Any wallet, any DID method | Versatile login, bring-your-own-credential |
+| Identity container | Any wallet, any DID method | Versatile login; bring-your-own-credential |
 | Authoring / publication | AT Protocol PDS | Signed, canonical, portable records |
+| Group publishing identity | CGS (AT Protocol Certified Group Service) | Org/project group `did:plc` while users still log in with any wallet |
 | Long-term durability | IPFS + Filecoin | 50-year archival with economic storage proofs |
-| Interactive triggers | Ethereum Attestation Service | On-chain attestations that fire covenant contracts |
+| Interactive triggers | Ethereum Attestation Service | On-chain attestations that fire covenant contracts when witness thresholds are met |
 | Ecological anchoring | Regen Network `x/data` | BLAKE2b-256 anchoring for ecological-credit workflows |
-| Machine conformance | CEL (Common Expression Language) | Deterministic schema and rule evaluation |
-| Group publishing identity | CGS (AT Protocol Certified Group Service) | Org/project group `did:plc` so users still log in with any wallet |
+| Portable evaluation records | Hypercerts v2 | Claim records cross-compatible with crediting/certification registries |
+| Machine conformance | CEL (Common Expression Language) | Deterministic schema and rule evaluation inside machine witness |
+
+The point of spreading the work this way is that a single claim is portable across the whole table: it can be archived for durability on IPFS/Filecoin, published canonically on a PDS, used to fire a trigger attestation on EAS, anchored for an ecological-credit workflow on Regen, and indexed as an evaluation record by Hypercerts — without being re-shaped for any one of them. This is why Waka sits upstream of any particular issuance, crediting, or certification ecosystem rather than being one: its job is to produce durable building blocks of verifiable truth that aggregate and bundle into a range of issuable instruments. The operational consequence is **measure once, report everywhere** — a record entered once flows into every accounting, certification, contracting, and funding system that needs it, without re-entry and without capture by the platforms downstream.
 
 ---
 
-## Standards and lineage
+## Roadmap — programmable remittance
 
-Earlier iterations of Waka were built foundationally on **Decentralized Identifiers** and the **Verifiable Credentials** data model.
-
-The current version takes AT Protocol primitives — **PDS, CEL, CGS, and `did:plc` logic** — as more foundational, without compromising versatility of identity login or protocol anchoring and issuance. The VC data model still lives inside the content of claim records, carrying cross-DID witness portability. Nothing about VCs has been given up; they have been tucked inside a more operationally mature publication substrate.
-
-Waka follows the lexicon standards being developed around **Hypercerts v2**, adopting **activities** as the atomic or central unit of claims construction. Waka is a **peer contributor to the Hypercerts lexicon ecosystem**, not a subordinate app. It adopts Hypercerts lexicons at the outer layer, and publishes `eco.waka.*` extensions for its novel layers:
-
-- witness taxonomy (peer review, participatory guarantee, expert review, self-attestation, CEL conformance, AI witness, schema conformance, checksum verification)
-- ecological institution containers (land covenants whose enforcement is automated by witnessed claims)
-- covenant trigger attestations (EAS-class attestations that fire smart contracts when witness thresholds are met)
-
-This is how Waka stays a standards participant without becoming a standards captive.
+Waka's motivation is in part derivative of work on ecological institutions — land titles and stewardship covenants with an embedded sovereign digital record, the project-level DID as their endpoint. The near-term roadmap extends the anchoring layer into automated downstream triggers: smart contracts whose covenant conditions are fired by witnessed claims once thresholds are met; conventional contracting systems — insurance payouts, grants, service agreements — keyed to claims; and programmable remittance from funds, where a smart contract takes claims as input and disburses stewardship payments, tenure extensions, or ecological-credit settlements. The claims engine is not an end in itself; it is the input substrate for automated, legible, accountable remittance and enforcement — the layer that makes living covenants programmable without removing human oversight.
 
 ---
 
-## Motivation — upstream of issuance
+## The two example modes in the demos
 
-The project is motivated by multiple years of experience working within the environmental accounting and crediting systems. The logic underlying Waka's claims is to sit **upstream of any particular issuance, evaluation, crediting, or certification ecosystem**.
+- **Data trust example** — skips the claims engine. Authenticated users upload resources and anchor them directly across substrates: sovereign storage and access with on-chain receipts.
+- **Claims engine example** — uses all three layers, exercising the VC witness model as a design space for verification. The full thesis.
 
-Waka's job is to produce **durable building blocks of verifiable truth** that can be aggregated and bundled together to generate a range of different anchorable or issuable instruments. It is not itself an issuance, crediting, or funding system. It sits one layer upstream, producing claims that drive those systems.
-
-This is why protocol agnosticism matters so much: to be meaningfully upstream of any issuance ecosystem, Waka has to work with all of them. Committing to one stack would collapse the moat.
-
-### Measure once, report everywhere
-
-The operational consequence of sitting upstream is **measure once, report everywhere**. A record entered once — an observation, a measurement, a decision, a piece of evidence — should be able to flow into every accounting, certification, contracting, and funding system that needs it, without being re-entered and without being captured by any of the platforms that consume it downstream.
-
-The common data model, the portable witness records, and the protocol-agnostic anchoring layer are the machinery that makes this possible. A Waka claim is not shaped to fit a particular reporting regime; it is shaped to be reusable across as many of them as its witness methodology supports. Each downstream system reads the same durable substrate, applies its own rubrics, and decides what to do with what it finds.
+Both modes are live; which one a project uses depends on whether it needs structured claims or only sovereign archival.
 
 ---
 
-## The claims engine — witness as a verification design space
+## Codebase architecture
 
-Waka wraps a sophisticated **claims engine** around the VC core logic. The claims engine retains the defining feature of the VC data model: **a range of different witness processes or protocols can be deployed on data subjects**. Waka builds on two classes of witness:
+**Stack:** Next.js (App Router) · TypeScript · Tailwind CSS v4 · Supabase (PostgreSQL + Auth + RLS) · ReactFlow · Pinata (IPFS) · EAS SDK · AT Protocol
 
-### Human witness — attestation-based
+**Key directories:**
+```
+app/
+  actions/          # Server actions (auth, resources, claims, anchoring)
+  components/       # UI — ProjectPageClient, ClaimsEngine, ResourceInspector, ProjectGraphClient
+  projects/[id]/    # Project detail pages
+  share/[slug]/     # Public read-only snapshot pages
+lib/
+  ontologies/       # Schema definitions (SDG, Ubuntu, ecological, etc.)
+  supabase/         # Supabase clients (server, client, middleware)
+scripts/
+  export-public-snapshot.ts  # Snapshot export for public share pages
+```
 
-A person or group asserting something about a claim.
+**Data model:**
+- **Resources** — proposals, actions, observations, general resources per project. Nodes in an evidence graph.
+- **Validation nodes** — witness-method containers producing witness records (human or machine) against a claim subject.
+- **Claims** — the witnessed subject (analog to `org.hypercerts.claim.activity`). Carries title, description, linked resources, and an accreting set of witness proofs.
+- **Anchors** — content-addressed records pointing at PDS AT-URIs, IPFS CIDs, EAS attestation UIDs, and Regen BLAKE2b hashes.
 
-- **Peer review** — multiple witnesses, no role constraint
-- **Participatory guarantee system (PGS)** — quorum-based group attestation
-- **Expert review** — single credentialed auditor
-- **Self-attestation** — the originator asserting their own claim
-
-Human witness covers credentials, proof of authority, and peer participatory verification.
-
-### Machine witness — algorithmic and AI-based
-
-An algorithm, AI model, or schema-conformance check asserting something about a claim.
-
-- **CEL expression evaluation** — deterministic rule checks over measurements
-- **Schema conformance** — scoring raw input against registered methodologies (e.g., Regen MRV)
-- **Checksum / content-hash verification** — tamper-evidence as a first-class witness method
-- **AI classification and query** — LLM-based evaluation with confidence scores
-- **Algorithmic review agents** — composable checks with verifiable inputs
-
-### Composition
-
-Multiple witness methods can coexist on the same claim. Peer review + PGS quorum + CEL conformance + AI classification, all at once. Other systems force you to pick one. Waka lets them compose.
-
-**Human–machine interaction at the verification layer** is one of Waka's novel contributions — an extension to the Hypercerts v2 evaluation lexicon, building on the logic of verifiable credentials and DIDs.
-
-### A design space, not a single answer
-
-Technical data verification is largely a political question: *who gets to say what data is valid or not?* The claims engine creates a **design space** around the political and technical substrate through which we verify data — it does not pretend there is one right answer. Each project defines the witnessing methodology appropriate to its context, and the validation and verification of information is built to **include and integrate the originators of the data** as much as possible.
+**Identity hierarchy** (the nested-container model from *The identity layer* above):
+- **Org DID** (`did:plc`) — collective identity, membership, cross-project coordination
+- **Project DID** (`did:plc`) — sovereign stewardship subject, the endpoint embedded in covenants and legal documents
+- **User DID** — any method (`did:pkh`, `did:plc`, `did:ethr`, `did:key`), used for authentication and as witness signing key inside org/project records
 
 ---
 
-## Claims engine as organizational perception system
+## Developer setup
 
-The claims engine is a kind of **organizational or institutional perception system**. It takes the raw input of resources and artifacts, and structures — through human or machine means — how well that raw input conforms to existing analogs, schemas, benchmarks, and symbolic references.
+### Prerequisites
+- Node.js 18+
+- A Supabase project (PostgreSQL + Auth)
+- (Optional) Pinata account for IPFS
+- (Optional) Ethereum wallet + EAS Sepolia deployment for attestations
+- (Optional) AT Protocol credentials for Hypercerts
 
-> Perception systems aren't just observing the world. They're taking that raw observation and measuring it according to what they already know.
+### Environment
+Create `.env.local` with:
 
-This **measuring of new input against established methodologies, certification standards, schemas, and symbolic references** is the novel proposition of Waka. It is what separates the claims engine from a document store, an attestation service, or a blockchain indexer. Waka turns raw evidence into structured, measured, comparable claims — inside a design space the community of practice controls.
+```env
+# Required
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
----
+# IPFS (Pinata)
+PINATA_JWT=
+NEXT_PUBLIC_GATEWAY_URL=
 
-## Claims sovereignty
+# EAS (Ethereum Attestation Service)
+EAS_PRIVATE_KEY=
+EAS_SCHEMA_UID=
 
-> **Data doesn't run the world. The claims we make upon that data run the world.**
+# Hypercerts (AT Protocol)
+ATPROTO_SERVICE_HANDLE=
+ATPROTO_APP_PASSWORD=
+```
 
-Waka is a tool for **claims sovereignty** as much as it is a process of doing data sovereignty. Raw data is inert. Claims — validated assertions about data, witnessed under explicit processes, attached to identities — are what drive contracts, agreements, funding allocation, certification, insurance, and institutional decisions.
+### Run
 
-Owning your data is a prerequisite. Owning the claims made upon it is the prize.
+```bash
+npm install
+npm run dev
+```
 
----
+### Database
+Run migrations in order from `supabase/migrations/`. See `docs/RUN_MIGRATIONS.md` for the full sequence.
 
-## The three core pillars
+### Exporting a public snapshot
 
-Waka is three layers:
+```bash
+npx tsx scripts/export-public-snapshot.ts <projectId> <slug>
+```
 
-1. **Identity** — a highly versatile authentication system on the front. Any wallet, any DID method. The application session is convenience; the DID is the sovereign identity.
-2. **Claims engine** — the middle layer. Validation nodes, witness methods, schemas, benchmarks, measurement. Produces witnessed claims from raw resources.
-3. **Anchoring and issuance** — a versatile anchoring and issuance system at the rear. IPFS/Filecoin for durability, EAS for triggers, Regen for ecological anchoring, Hypercerts for portable evaluation records, PDS for sovereign publication.
-
-Every feature in Waka maps to one of these three pillars.
-
-### Two example modes demonstrate the layering
-
-- **Data trust example** — skips the claims engine. Authenticated users upload resources and anchor them directly across substrates. This is Waka as a step up from Google Drive for anyone recording data they intend to use for accounting, contracting, or certification — data that needs to be authoritative in order to do things with it. Full sovereignty over storage and access, structured upload, direct anchoring.
-- **Claims engine example** — uses all three layers. Explores the VC witness model to create a design space for verification. This is the full Waka thesis.
-
-Both modes are available. Which one a given project uses depends on whether it needs structured claims or just sovereign archival.
-
----
-
-## Near-future roadmap — programmable remittance
-
-Waka's motivation is in part derivative of work on **Ecological Institutions** — the idea that a land title or stewardship covenant can have an embedded sovereign digital record with the project DID as its endpoint. As such, Waka is highly motivated to integrate claims issuance into:
-
-- **Smart contracts** — covenant triggers fired by witnessed claims when thresholds are met
-- **Conventional contracting systems** — insurance payouts, grants, service agreements
-- **Programmable remittance from funds** — smart contracts with claims as input, disbursing stewardship payments, tenure extensions, and ecological-credit settlements
-
-This is the near-future roadmap for Waka development. The claims engine is not an end in itself. It is the input substrate for automated, legible, accountable remittance and enforcement — the layer that makes "living covenants" programmable without giving up human oversight.
-
----
-
-## Peer contribution and collaboration
-
-Ultimately, Waka is a **participant in and extension of the standards developed by Hypercerts**, allowing it to interact and collaborate with a range of other projects drawing on that system. This peer posture — neither subordinate to nor competitive with Hypercerts — is how Waka's protocol-agnostic ambition stays coherent in a real ecosystem of other builders.
-
-The claims engine, the witness taxonomy, the covenant trigger layer, and the ecological institution container are Waka's novel contributions. Everything else — the identity substrate, the publication substrate, the durability substrate, the trigger substrate — is contributed by peers in the ecosystem, and Waka is designed to compose with those peers rather than replace them.
+Copies attachments to the public storage bucket and writes a snapshot JSON to `app/share/_snapshots/<slug>.json`. Commit the file and deploy to publish the public page.
 
 ---
 
-*See the [README](./README.md) for the accessible introduction, the video walkthroughs, architecture details, and developer setup.*
+## Status
+
+Active development. The core loop — resource collection → witnessed claims → multi-layer anchoring — is complete in its current form. Ongoing work:
+
+- **M2** — EAS on-chain attestation (complete)
+- **M3** — Validation node as schema conformance engine (complete)
+- **CGS integration** — project/org-level group `did:plc` publication via Hypercerts' Certified Group Service (planned)
+- **Witness taxonomy lexicons** — `eco.waka.*` extensions for peer review, PGS, machine witness, methodology tags (in design)
+- **Covenant trigger layer** — reference smart contract standard and programmable remittance from witnessed claims (in design)
+- **Filecoin mirroring** — High Durability archival toggle (planned)
+
+---
+
+*See the [Conceptual Position](./CONCEPTUAL_POSITION.md) for the conceptual overview and the video walkthroughs, or the [README](./README.md) for the short version.*

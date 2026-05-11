@@ -79,7 +79,7 @@ Waka is meant to last — a hard encoding of information and assertions about wh
 ### Claims sovereignty, not just data sovereignty
 Waka does not just store raw data; it integrates human and machine verification to produce validated claims. A Waka record carries its evidence, its witnessing methodology, and its signatures with it, so anyone can verify what was claimed and who or what witnessed it without having to ask.
 
-### Verification is political — and social, and technical
+### Verification is both a technical and political process
 Whether a piece of data counts as valid is not a neutral technical fact. It is an overlap of authority and technical resolution — who gets to say, and by what method. Rather than ship one answer, Waka builds a design space: each project specifies the witnessing and verification process appropriate to its context, and the design space is built so the originators of the data are included and integrated as far as possible.
 
 ### A durable save point for existing practice

@@ -42,6 +42,27 @@ The Verifiable Credentials data model is conventionally used to make assertions 
 
 Because the VC data model lives inside the content of the claim, a witness record signed under one DID method stays verifiable when the claim is read in a context built around another. A claim therefore carries three things together — its evidence (the linked resources), its method of verification (which witness processes were applied, by whom or by what), and its signatures (the DID-signed witness records) — so anyone reading it can see what was asserted and who or what stood behind the assertion, without having to ask. Repurposing verifiable credentials this way — witness over data subjects as a design space for verification, rather than attribute assertion about identities — is one of Waka's novel contributions; the witness engine described below is its implementation.
 
+In bytes, a single witness record is a VC carried inside the content of a claim record — issuer, the subject being witnessed, the method, the criteria it was checked against, the evidence it looked at, a verdict, and a proof (illustrative; field names and the `eco.waka.*` namespace are provisional, not a fixed spec):
+
+```json
+{
+  "@context": ["https://www.w3.org/ns/credentials/v2", "https://eco.waka/witness/v1"],
+  "type": ["VerifiableCredential", "WitnessRecord"],
+  "issuer": "did:plc:ewvi7nxzyoun6zhxrhs64oiz",
+  "validFrom": "2026-05-12T14:00:00Z",
+  "credentialSubject": {
+    "id": "at://did:plc:project/org.hypercerts.claim.activity/3kpz7m2x4c2zk",
+    "witnessMethod": "schema-conformance",
+    "criteriaSnapshot": { "schema": "eco.waka.schema.mrv.reforestation.v1", "hash": "blake2b-256:7f3a91...c1" },
+    "evidence": ["ipfs://bafybeihn5e2k...", "at://did:plc:project/app.certified.location/3kq8..."],
+    "verdict": { "result": "partial", "score": 0.78 }
+  },
+  "proof": { "type": "DataIntegrityProof", "cryptosuite": "eddsa-jcs-2022", "verificationMethod": "did:plc:ewvi7nxzyoun6zhxrhs64oiz#atproto", "proofValue": "z58..." }
+}
+```
+
+A different witness method changes `witnessMethod`, `criteriaSnapshot`, and the shape of `verdict` — a `pass`/`fail`, a score, structured output — and nothing else. Records accrete on a claim rather than overwrite: a `peer` attestation, an `expert` review, and the conformance check above are three records on one subject, not three versions of one record.
+
 ---
 
 ## The Hypercerts v2 lexicon space
@@ -65,6 +86,23 @@ Within the two classes, the methods Waka exposes are:
 - **Human witness** — *peer review* (multiple witnesses, no role constraint), *participatory guarantee system* (quorum-based group attestation), *expert review* (a single credentialed auditor), *self-attestation* (the originator asserting their own claim). This is where credentials and proof of authority enter the system.
 - **Machine witness** — *CEL expression evaluation* (deterministic rule checks over measurements), *schema conformance* (scoring raw input against a registered methodology, e.g. an MRV schema), *checksum / content-hash verification* (tamper-evidence as a first-class witness method), *AI classification and query* (model-based evaluation with confidence scores), *algorithmic review agents* (composable checks with verifiable inputs).
 
+What composes the methods is a **witness policy** — a signed, versioned record that names which methods are admissible, what a witnessing party must be (a role, or a credential the party holds), and how the results combine (a threshold, a role quorum, a weighted sum, or alternatives). The policy never names specific signer DIDs; the binding of a role to concrete DIDs lives in a separate registry the policy references, so another project adopts the same policy by pointing it at a different registry. Common Expression Language is the natural medium for the combination rule — the same expression, evaluated over the witness records on a claim, returns the same verdict wherever it runs (illustrative):
+
+```
+// the claim clears its policy when EITHER branch is true
+
+// A — community quorum plus an automated cross-check
+size(records.filter(r, r.witnessMethod == "peer" && r.verdict.result == "pass")) >= 3
+  && records.exists(r, r.witnessMethod == "schema-conformance" && r.verdict.score >= 0.7)
+
+// B — a single registered auditor
+|| records.exists(r, r.witnessMethod == "expert"
+                     && r.issuer in registry.auditors
+                     && r.verdict.result == "pass")
+```
+
+A low-trust path and a high-quorum-plus-automation path can satisfy the same claim; a project picks the branches, the methods, and the registry — Waka picks none of them.
+
 Underneath the catalog is the design-space argument. Deciding what counts as valid input — measured against established methods, schemas, certification standards, or lines of authority — is itself a design space, and treating it as one is the proposition. In practice a project can design the space of authority around its data: who is authorized to witness, by which method, with what quorum or weight — letting local and external stakeholders enter into structured collaborations around the auditing and verification of the data, with the originators of the data included as far as possible. The political question (who gets to say) and the technical question (by what method) are answered together, per context, inside the engine. Human–machine interaction at the verification layer, composed this way, is Waka's principal extension to the Hypercerts v2 evaluation namespace.
 
 ---
@@ -85,7 +123,17 @@ Anchoring is spread deliberately across substrates so that each does what it doe
 | Stream publication / data feed *(candidate)* | Ceramic | A verifiable claim stream with built-in Ethereum-anchored ordering; a feed downstream consumers in the Ceramic / ComposeDB ecosystem can subscribe to and verify — overlaps with the PDS role rather than the EAS one; under evaluation given Ceramic's current trajectory |
 | Machine conformance | CEL (Common Expression Language) | Deterministic schema and rule evaluation inside machine witness |
 
-The point of spreading the work this way is that a single claim is portable across the whole table: it can be archived for durability on IPFS/Filecoin, published canonically on a PDS, used to fire a trigger attestation on EAS, anchored for an ecological-credit workflow on Regen, indexed as an evaluation record by Hypercerts, and — where downstream consumers live there — published as a Ceramic stream — without being re-shaped for any one of them. This is why Waka sits upstream of any particular issuance, crediting, or certification ecosystem rather than being one: its job is to produce durable building blocks of verifiable truth that aggregate and bundle into a range of issuable instruments. The operational consequence is **measure once, report everywhere** — a record entered once flows into every accounting, certification, contracting, and funding system that needs it, without re-entry and without capture by the platforms downstream.
+The point of spreading the work this way is that a single claim is portable across the whole table: it can be archived for durability on IPFS/Filecoin, published canonically on a PDS, used to fire a trigger attestation on EAS, anchored for an ecological-credit workflow on Regen, indexed as an evaluation record by Hypercerts, and — where downstream consumers live there — published as a Ceramic stream — without being re-shaped for any one of them. Concretely, one authoring step leaves the same object addressable at a handful of substrate-native identifiers (illustrative):
+
+```
+PDS     at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/eco.waka.witness.composition/3kq7lm2x4c2zk
+IPFS    ipfs://bafybeihn5e2k...          (+ a Filecoin storage deal for the evidence bundle)
+EAS     0x9c8f1a...e2                    (attestation UID; fires the covenant contract)
+Regen   blake2b-256:7f3a91...c1          (anchored via x/data MsgAnchor)
+HC v2   org.hypercerts.context.evaluation record in the evaluator's PDS, sidecar-linked
+```
+
+This is why Waka sits upstream of any particular issuance, crediting, or certification ecosystem rather than being one: its job is to produce durable building blocks of verifiable truth that aggregate and bundle into a range of issuable instruments. The operational consequence is **measure once, report everywhere** — a record entered once flows into every accounting, certification, contracting, and funding system that needs it, without re-entry and without capture by the platforms downstream.
 
 ---
 

@@ -34,6 +34,8 @@ Waka is built as a vessel for localized record, where not only the data, but the
 - **Sovereign storage.** Data storage and access stay contextual to the communities Waka serves, rather than in service to the platforms that host the data and profit from it. Waka anchors information — distributed, long-format — across a range of sovereign storage substrates.
 - **Programmable witness records.** Waka provides a claims engine: a design space of human and algorithmic witness methods that assert factuality and authority over bodies of evidence. Instead of a PDF and a credential, the process by which a body of evidence becomes a claim is something a community can specify, inspect, and run — and run again.
 
+To witness is to see something happen and carry that sight into a collective act of sensemaking — *did this or that occur* — as part of a social process rather than alone. Programming witness means building that act out of modular parts: in Waka's claims engine, composable witness methods and policies are a designable form of validation criteria for the creation of claims. A witness method is one way of seeing; a witness policy is the signed, portable rule that composes methods into a verdict. (More on the notion itself in [On Witness](./docs/ON_WITNESS.md).)
+
 Those claims can then be instrumentalized — to issue certificates, build crediting systems, trigger smart contracts, and a great deal else.
 
 > **Data doesn't run the world. Claims do.**

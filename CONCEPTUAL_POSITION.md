@@ -23,9 +23,11 @@ Two short video introductions. Start with the first — it's the fastest picture
 
 ## What Waka is
 
-Waka is a framework for the creation of digital vessels used to store and manage sovereign data and claims. Waka is a medium to create machine-readible claims about the state of the planet through a modular data verification model based on human and machine "witness methods". It is an engine of data-driven storytelling that upholds the contextual integrity of information through the first principles of its design.
+Waka is a digital vessel for sovereign data and claims management, and a medium of machine-readable witness about the state of the world. It is an engine of data-driven storytelling that upholds the contextual integrity of information through the first principles of its design.
 
-In contrast to dominant narratives about the big, abstract, scaleless, placeless quality of data, most data is localized to particular people and contexts. And increasingly, localized information — the kind not easily scraped from the internet and public documents — is needed to inform a range of sociotechnical infrastructures: autonomous systems, agent training data and context, smart contracts, asset evaluations, risk assessments, fund remittance, policy decisions.
+In contrast to dominant narratives about the big, abstract, scaleless, placeless quality of data, most data is localized to particular people and contexts. Increasingly, localized information — the kind not easily scraped from the internet and public documents — is needed to inform a range of sociotechnical infrastructures: autonomous systems, agent training data and context, smart contracts, asset evaluations, risk assessments, fund remittance, policy decisions.
+
+To witness is to see something happen and carry that sight into a collective act of sensemaking — *did this or that occur* — as part of a social process rather than alone. Programming witness means building that act out of modular parts: in Waka's claims engine, composable witness methods and policies are a designable form of validation criteria for the creation of claims. A witness method is one way of seeing; a witness policy is the signed, portable rule that composes methods into a verdict. (More on the notion itself in [On Witness](./docs/ON_WITNESS.md).)
 
 As the convergence of distributed and autonomous systems intensifies, individuals and groups require greater control — not only over the systems that store data, but over the means by which data is deemed authoritative and factual. Both our storage systems and the processes that confer authority on what we store are fundamentally antiquated. They defer power to central authorities: the platforms that host and profit from the data, and the credentialing regimes that decide whose say-so counts as fact.
 
@@ -33,8 +35,6 @@ Waka is built as a vessel for localized record, where not only the data, but the
 
 - **Sovereign storage.** Data storage and access stay contextual to the communities Waka serves, rather than in service to the platforms that host the data and profit from it. Waka anchors information — distributed, long-format — across a range of sovereign storage substrates.
 - **Programmable witness records.** Waka provides a claims engine: a design space of human and algorithmic witness methods that assert factuality and authority over bodies of evidence. Instead of a PDF and a credential, the process by which a body of evidence becomes a claim is something a community can specify, inspect, and run — and run again.
-
-To witness is to see something happen and carry that sight into a collective act of sensemaking — *did this or that occur* — as part of a social process rather than alone. Programming witness means building that act out of modular parts: in Waka's claims engine, composable witness methods and policies are a designable form of validation criteria for the creation of claims. A witness method is one way of seeing; a witness policy is the signed, portable rule that composes methods into a verdict. (More on the notion itself in [On Witness](./docs/ON_WITNESS.md).)
 
 Those claims can then be instrumentalized — to issue certificates, build crediting systems, trigger smart contracts, and a great deal else.
 

@@ -23,7 +23,7 @@ Two short video introductions. Start with the first — it's the fastest picture
 
 ## What Waka is
 
-Waka is a digital vessel for sovereign data and claims management, and a medium of machine-readable witness about the state of the world. It is an engine of data-driven storytelling that upholds the contextual integrity of information through the first principles of its design.
+Waka is a framework for the creation of digital vessels used to store and manage sovereign data and claims. Waka is a medium to create machine-readible claims about the state of the planet through a modular data verification model based on human and machine "witness methods". It is an engine of data-driven storytelling that upholds the contextual integrity of information through the first principles of its design.
 
 In contrast to dominant narratives about the big, abstract, scaleless, placeless quality of data, most data is localized to particular people and contexts. And increasingly, localized information — the kind not easily scraped from the internet and public documents — is needed to inform a range of sociotechnical infrastructures: autonomous systems, agent training data and context, smart contracts, asset evaluations, risk assessments, fund remittance, policy decisions.
 

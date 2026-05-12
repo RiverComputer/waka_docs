@@ -10,7 +10,7 @@ Interoperable, protocol-agnostic software cannot be assembled on top of a propri
 
 Waka is built on the protocols that are foundational to the design and implementation of the internet rather than on an account: Decentralized Identifiers (DIDs) for identity, the Verifiable Credentials (VC) data model for signed assertions, AT Protocol primitives — the Personal Data Server, `did:plc`, CGS, and CEL — for publication and machine evaluation, and the Hypercerts v2 lexicon space for the shape of a claim. Anchoring a record across several of these substrates rather than one is deliberate: each substrate does what it does best, and no single one becomes load-bearing for the whole system.
 
-Earlier iterations of Waka were built foundationally on DIDs and the VC data model alone. The current version takes the AT Protocol primitives as more foundational, without compromising the versatility of identity login or of anchoring and issuance: the VC data model has been tucked inside the content of a claim, where it still carries cross-DID portability, now inside a more operationally mature publication substrate. Adopting Hypercerts v2 lexicons at the outer layer and publishing `eco.waka.*` extensions for Waka's novel layers keeps the project a standards participant rather than a standards captive.
+Earlier iterations of Waka were built foundationally on DIDs and the VC data model alone. The current version takes the AT Protocol primitives as more foundational, without compromising the versatility of identity login or of anchoring and issuance: the VC data model has been tucked inside the content of a claim, where it still carries cross-DID portability, now inside a more operationally mature publication substrate. Adopting Hypercerts v2 lexicons at the outer layer and publishing a small sidecar namespace for Waka's novel layers — a working `org.witness.*`, itself actively under development — keeps the project a standards participant rather than a standards captive.
 
 ---
 
@@ -42,18 +42,18 @@ The Verifiable Credentials data model is conventionally used to make assertions 
 
 Because the VC data model lives inside the content of the claim, a witness record signed under one DID method stays verifiable when the claim is read in a context built around another. A claim therefore carries three things together — its evidence (the linked resources), its method of verification (which witness processes were applied, by whom or by what), and its signatures (the DID-signed witness records) — so anyone reading it can see what was asserted and who or what stood behind the assertion, without having to ask. Repurposing verifiable credentials this way — witness over data subjects as a design space for verification, rather than attribute assertion about identities — is one of Waka's novel contributions; the witness engine described below is its implementation.
 
-In bytes, a single witness record is a VC carried inside the content of a claim record — issuer, the subject being witnessed, the method, the criteria it was checked against, the evidence it looked at, a verdict, and a proof (illustrative; field names and the `eco.waka.*` namespace are provisional, not a fixed spec):
+In bytes, a single witness record is a VC carried inside the content of a claim record — issuer, the subject being witnessed, the method, the criteria it was checked against, the evidence it looked at, a verdict, and a proof. `witnessMethod` is one of the human methods `peer` / `pgs` / `expert` / `self` or the machine methods `cel` / `schema` / `checksum` / `ai` / `agent` (illustrative — the `org.witness.*` lexicon namespace is a working choice, still under active development):
 
 ```json
 {
-  "@context": ["https://www.w3.org/ns/credentials/v2", "https://eco.waka/witness/v1"],
+  "@context": ["https://www.w3.org/ns/credentials/v2", "https://witness.org/ns/v1"],
   "type": ["VerifiableCredential", "WitnessRecord"],
   "issuer": "did:plc:ewvi7nxzyoun6zhxrhs64oiz",
   "validFrom": "2026-05-12T14:00:00Z",
   "credentialSubject": {
     "id": "at://did:plc:project/org.hypercerts.claim.activity/3kpz7m2x4c2zk",
-    "witnessMethod": "schema-conformance",
-    "criteriaSnapshot": { "schema": "eco.waka.schema.mrv.reforestation.v1", "hash": "blake2b-256:7f3a91...c1" },
+    "witnessMethod": "schema",
+    "criteriaSnapshot": { "schema": "org.witness.schema.mrv.reforestation.v1", "hash": "blake2b-256:7f3a91...c1" },
     "evidence": ["ipfs://bafybeihn5e2k...", "at://did:plc:project/app.certified.location/3kq8..."],
     "verdict": { "result": "partial", "score": 0.78 }
   },
@@ -61,13 +61,29 @@ In bytes, a single witness record is a VC carried inside the content of a claim 
 }
 ```
 
-A different witness method changes `witnessMethod`, `criteriaSnapshot`, and the shape of `verdict` — a `pass`/`fail`, a score, structured output — and nothing else. Records accrete on a claim rather than overwrite: a `peer` attestation, an `expert` review, and the conformance check above are three records on one subject, not three versions of one record.
+A different witness method changes `witnessMethod`, `criteriaSnapshot`, and the shape of `verdict` — a `pass`/`fail`, a score, structured output — and nothing else. Records accrete on a claim rather than overwrite: a `peer` attestation, an `expert` review, and the conformance check above are three records on one subject, not three versions of one record. How that VC is wrapped for publication, and how it sidecars the Hypercerts evaluation record, is the next section.
 
 ---
 
 ## The Hypercerts v2 lexicon space
 
-Waka does not invent the shape of a claim. The notion of a claim corresponds to the **activity** lexicon of Hypercerts v2, and the VC-extended witness model described above is, in lexicon terms, an extension of the **evaluation** namespace of Hypercerts v2: Waka publishes `eco.waka.*` lexicons for the layers Hypercerts v2 does not yet cover — the witness taxonomy, covenant trigger attestations, and ecological institution containers — as a peer contributor to that namespace rather than a subordinate app.
+Waka does not invent the shape of a claim. The notion of a claim corresponds to the **activity** lexicon of Hypercerts v2, and the VC-extended witness model described above sits, in lexicon terms, as a sidecar layer over the Hypercerts v2 **evaluation** record: Waka publishes a small set of records in its own namespace — a working `org.witness.*`, actively under development — for the layers Hypercerts v2 does not yet cover (the witness taxonomy, covenant trigger attestations, ecological institution containers), as a peer contributor to that ecosystem rather than a subordinate app.
+
+The sidecar is an ATProto record that strong-references the Hypercerts records it enriches and carries the VC above inside `content` (illustrative — names provisional):
+
+```json
+{
+  "$type": "org.witness.record",
+  "claim":      { "uri": "at://did:plc:project/org.hypercerts.claim.activity/3kpz7m2x4c2zk", "cid": "bafyreih5e..." },
+  "evaluation": { "uri": "at://did:plc:evaluator/org.hypercerts.context.evaluation/3kq8m2x4c2zk", "cid": "bafyreid2x..." },
+  "witnessMethod": "schema",
+  "criteriaSnapshot": { "schema": "org.witness.schema.mrv.reforestation.v1", "hash": "blake2b-256:7f3a91...c1" },
+  "verdict": { "result": "partial", "score": 0.78 },
+  "content": { "...": "the WitnessRecord VC shown above — re-stated here so it travels with the record" }
+}
+```
+
+The Hypercerts `org.hypercerts.context.evaluation` record stays untouched in the evaluator's repo; an indexer that does not know `org.witness.*` simply does not see the enrichment. That is the contribution pattern Hypercerts' own documentation describes — the same one `org.hyperboards.*` already uses alongside `org.hypercerts.*` in a shared repository.
 
 What makes this more than lexicon housekeeping is the mode it runs in. Hypercerts v2 is AT-Protocol-native; Waka conforms to its data shape but does so in a **DID-protocol-agnostic** mode, which means the same claim can be authenticated, anchored, and issued into Web3 systems — Ethereum attestations, on-chain registries, smart contracts — and not only into AT Protocol. Waka therefore does three things at once: it conforms to the data shape of Hypercerts v2; it extends the evaluation class of that shape through the claims engine; and it opens a more versatile authentication, anchoring, and issuance space around the shape than the AT-Protocol-native context provides on its own.
 
@@ -86,24 +102,29 @@ Within the two classes, the methods Waka exposes are:
 - **Human witness** — *peer review* (multiple witnesses, no role constraint), *participatory guarantee system* (quorum-based group attestation), *expert review* (a single credentialed auditor), *self-attestation* (the originator asserting their own claim). This is where credentials and proof of authority enter the system.
 - **Machine witness** — *CEL expression evaluation* (deterministic rule checks over measurements), *schema conformance* (scoring raw input against a registered methodology, e.g. an MRV schema), *checksum / content-hash verification* (tamper-evidence as a first-class witness method), *AI classification and query* (model-based evaluation with confidence scores), *algorithmic review agents* (composable checks with verifiable inputs).
 
-What composes the methods is a **witness policy** — a signed, versioned record that names which methods are admissible, what a witnessing party must be (a role, or a credential the party holds), and how the results combine (a threshold, a role quorum, a weighted sum, or alternatives). The policy never names specific signer DIDs; the binding of a role to concrete DIDs lives in a separate registry the policy references, so another project adopts the same policy by pointing it at a different registry. Common Expression Language is the natural medium for the combination rule — the same expression, evaluated over the witness records on a claim, returns the same verdict wherever it runs (illustrative):
+What composes the methods is a **witness policy** — `org.witness.policy`, a signed, versioned record that names which methods are admissible, what a witnessing party must be (a role, or a credential the party holds), and how the results combine. It never names specific signer DIDs; the binding of a role to concrete DIDs lives in a separate `org.witness.registry` record the policy references, so another project adopts the same policy by pointing it at a different registry. Common Expression Language carries the combination rule — the same expression, evaluated over the witness records on a claim, returns the same verdict wherever it runs (illustrative — names provisional):
 
+```jsonc
+{
+  "$type": "org.witness.policy",
+  "version": "2026-05-12.1",
+  "methods": ["peer", "pgs", "expert", "self", "cel", "schema", "checksum", "ai", "agent"],   // the admissible set
+  "roles":   { "auditor": { "registry": "at://did:plc:project/org.witness.registry/auditors" } },  // role → DIDs binds in the registry, not here
+  "combine": {
+    "lang": "cel",
+    // the records on the claim clear the policy when EITHER branch is true:
+    "expr": [
+      "size(records.filter(r, r.witnessMethod == 'peer' && r.verdict.result == 'pass')) >= 3",
+      "  && records.exists(r, r.witnessMethod == 'schema' && r.verdict.score >= 0.7)",
+      "  || records.exists(r, r.witnessMethod == 'expert' && r.party in roles.auditor && r.verdict.result == 'pass')"
+    ]
+  }
+}
 ```
-// the claim clears its policy when EITHER branch is true
 
-// A — community quorum plus an automated cross-check
-size(records.filter(r, r.witnessMethod == "peer" && r.verdict.result == "pass")) >= 3
-  && records.exists(r, r.witnessMethod == "schema-conformance" && r.verdict.score >= 0.7)
+A low-trust path and a high-quorum-plus-automation path can satisfy the same claim; a project picks the methods, the branches, and the registry — Waka picks none of them.
 
-// B — a single registered auditor
-|| records.exists(r, r.witnessMethod == "expert"
-                     && r.issuer in registry.auditors
-                     && r.verdict.result == "pass")
-```
-
-A low-trust path and a high-quorum-plus-automation path can satisfy the same claim; a project picks the branches, the methods, and the registry — Waka picks none of them.
-
-Underneath the catalog is the design-space argument. Deciding what counts as valid input — measured against established methods, schemas, certification standards, or lines of authority — is itself a design space, and treating it as one is the proposition. In practice a project can design the space of authority around its data: who is authorized to witness, by which method, with what quorum or weight — letting local and external stakeholders enter into structured collaborations around the auditing and verification of the data, with the originators of the data included as far as possible. The political question (who gets to say) and the technical question (by what method) are answered together, per context, inside the engine. Human–machine interaction at the verification layer, composed this way, is Waka's principal extension to the Hypercerts v2 evaluation namespace.
+Underneath the catalog is the design-space argument. Deciding what counts as valid input — measured against established methods, schemas, certification standards, or lines of authority — is itself a design space, and treating it as one is the proposition. In practice a project can design the space of authority around its data: who is authorized to witness, by which method, with what quorum or weight — letting local and external stakeholders enter into structured collaborations around the auditing and verification of the data, with the originators of the data included as far as possible. The political question (who gets to say) and the technical question (by what method) are answered together, per context, inside the engine. Human–machine interaction at the verification layer, composed this way, is what the `org.witness.*` sidecar layer adds over the Hypercerts v2 evaluation record.
 
 ---
 
@@ -126,7 +147,7 @@ Anchoring is spread deliberately across substrates so that each does what it doe
 The point of spreading the work this way is that a single claim is portable across the whole table: it can be archived for durability on IPFS/Filecoin, published canonically on a PDS, used to fire a trigger attestation on EAS, anchored for an ecological-credit workflow on Regen, indexed as an evaluation record by Hypercerts, and — where downstream consumers live there — published as a Ceramic stream — without being re-shaped for any one of them. Concretely, one authoring step leaves the same object addressable at a handful of substrate-native identifiers (illustrative):
 
 ```
-PDS     at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/eco.waka.witness.composition/3kq7lm2x4c2zk
+PDS     at://did:plc:ewvi7nxzyoun6zhxrhs64oiz/org.witness.composition/3kq7lm2x4c2zk
 IPFS    ipfs://bafybeihn5e2k...          (+ a Filecoin storage deal for the evidence bundle)
 EAS     0x9c8f1a...e2                    (attestation UID; fires the covenant contract)
 Regen   blake2b-256:7f3a91...c1          (anchored via x/data MsgAnchor)
@@ -242,7 +263,7 @@ Active development. The core loop — resource collection → witnessed claims �
 - **M2** — EAS on-chain attestation (complete)
 - **M3** — Validation node as schema conformance engine (complete)
 - **CGS integration** — project/org-level group `did:plc` publication via Hypercerts' Certified Group Service (planned)
-- **Witness taxonomy lexicons** — `eco.waka.*` extensions for peer review, PGS, machine witness, methodology tags (in design)
+- **Witness taxonomy lexicons** — `org.witness.*` sidecar records for peer review, PGS, machine witness, policies, registries, methodology tags (namespace under active development)
 - **Covenant trigger layer** — reference smart contract standard and programmable remittance from witnessed claims (in design)
 - **Filecoin mirroring** — High Durability archival toggle (planned)
 

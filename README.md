@@ -2,12 +2,13 @@
 
 *Waka* (te reo Māori) — a canoe. A vessel that carries people and knowledge over time and space.
 
-Waka is a coordination interface for the creation and management of sovereign data and claims. People use it to store evidence, run that evidence through a composable verification system of human and machine-based "witness", and produce durable claims. Those claims can then be instrumentalized — to issue certificates, build crediting systems, trigger smart contracts, and a great deal else.
+Between the space of the private individual, and the public state, is a thick middle of intermediary scale organizations and social organisms which run on mutual authority. In the era of big data feeding big intelligence, such institutions may plan an important role upholding the "contextual integrity" of data, knowledge, resources, and trust. 
+
+Waka is a coordination interface for such organizations to create and manage sovereign data, claims, and resources. People use it to store evidence, run that evidence through a composable verification system of human and machine-based "witness", and produce durable claims. Those claims can then be instrumentalized — to allocate resources, coordinate access to information, issue certificates, build crediting systems, trigger smart contracts, and virtually anything else which runs on authoritative information.
 
 ## Two video walkthroughs
 
-Start with the first — it's the fastest picture of what the system does. The second goes deeper into the claims engine.
-
+Waka is good at building sovereign data trusts (video 1), and running different models of validation over that data to produce useful claims (video 2).
 <table>
   <tr>
     <td width="50%" valign="top">

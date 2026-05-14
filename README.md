@@ -2,7 +2,7 @@
 
 *Waka* (te reo Māori) — a canoe. A vessel that carries people and knowledge over time and space.
 
-Between the space of the private individual, and the public state, is a thick middle of intermediary scale organizations and social organisms which run on mutual authority. In the era of big intelligence, strongmen, and existenstial risk, such institutions may play an important role upholding the "contextual integrity" of data, knowledge, resources, and trust. 
+Between the space of the private individual, and the public state, is a "thick middle" of intermediary scale organizations and social organisms which run on mutual authority. In the era of big intelligence, strongmen, and existenstial risk, such institutions may play an important role upholding the "contextual integrity" of data, knowledge, resources, and trust. 
 
 Waka is a coordination interface for such organizations to create and manage sovereign data, claims, and resources. People use it to store evidence, run that evidence through a composable verification system of human and machine-based "witness", and produce durable claims. Those claims can then be instrumentalized — to allocate resources, coordinate access to information, issue certificates, build crediting systems, trigger smart contracts, and virtually anything else which runs on authoritative information.
 

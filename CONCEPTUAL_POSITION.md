@@ -11,11 +11,11 @@ Two short video introductions. Start with the first — it's the fastest picture
 <table>
   <tr>
     <td width="50%" valign="top">
-      <video src="https://github.com/RiverComputer/waka_docs/releases/download/media-v1/data-trust.mp4" controls></video>
+      <video src="https://github.com/user-attachments/assets/3ad6ea2e-0baf-48bb-aebd-0db87807707c" controls></video>
       <p><strong>1 · Sovereign data trust</strong> · ~3 min<br/>Waka as a step up from Google Drive. Authenticated upload, community ownership of the records, and direct anchoring to durable public infrastructure. The shortest tour of the system end to end.</p>
     </td>
     <td width="50%" valign="top">
-      <video src="https://github.com/RiverComputer/waka_docs/releases/download/media-v1/claims-engine.mp4" controls></video>
+      <video src="https://github.com/user-attachments/assets/652909c0-faf8-46dd-bee6-69e92ed7ae89" controls></video>
       <p><strong>2 · Claims engine</strong> · ~6 min<br/>The full three-layer flow — identity, claims engine, and anchoring — showing how raw resources become witnessed, validated claims under a verification process the community producing the data controls.</p>
     </td>
   </tr>

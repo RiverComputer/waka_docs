@@ -2,21 +2,20 @@
 
 *Waka* (te reo Māori) — a canoe. A vessel that carries people and knowledge over time and space.
 
-Between the space of the private individual, and the public state, is a "thick middle" of intermediary scale organizations and social organisms which run on mutual authority. In the era of big intelligence, strongmen, and existenstial risk, such institutions may play an important role upholding the "contextual integrity" of data, knowledge, resources, and trust. 
-
-Waka is a coordination interface for such organizations to create and manage sovereign data, claims, and resources. People use it to store evidence, run that evidence through a composable verification system of human and machine-based "witness", and produce durable claims. Those claims can then be instrumentalized — to allocate resources, coordinate access to information, issue certificates, build crediting systems, trigger smart contracts, and virtually anything else which runs on authoritative information.
+Waka is a coordination interface for the creation and management of sovereign data and claims. People use it to store evidence, run that evidence through a composable verification system of human and machine-based "witness", and produce durable claims. Those claims can then be instrumentalized — to issue certificates, build crediting systems, trigger smart contracts, and a great deal else.
 
 ## Two video walkthroughs
 
-Waka is good at building sovereign data trusts (video 1), and running different models of validation over that data to produce useful claims (video 2).
+Start with the first — it's the fastest picture of what the system does. The second goes deeper into the claims engine.
+
 <table>
   <tr>
     <td width="50%" valign="top">
-      <video src="https://github.com/user-attachments/assets/7abf33c1-2f04-4297-99a7-30b280f6d8bd" controls></video>
+      <video src="https://github.com/RiverComputer/waka_docs/releases/download/media-v1/data-trust.mp4" controls></video>
       <p><strong>1 · Sovereign data trust</strong> · ~3 min<br/>Waka as a step up from Google Drive. Authenticated upload, community ownership of the records, and direct anchoring to durable public infrastructure. The shortest tour of the system end to end.</p>
     </td>
     <td width="50%" valign="top">
-      <video src="https://github.com/user-attachments/assets/de9634a2-6495-4e3b-9077-7fec67d79f9f" controls></video>
+      <video src="https://github.com/RiverComputer/waka_docs/releases/download/media-v1/claims-engine.mp4" controls></video>
       <p><strong>2 · Claims engine</strong> · ~6 min<br/>The full three-layer flow — identity, claims engine, and anchoring — showing how raw resources become witnessed, validated claims under a verification process the community producing the data controls.</p>
     </td>
   </tr>

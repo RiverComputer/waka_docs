@@ -85,7 +85,7 @@ The project is built in context with real collaborators and real projects. The e
 
 **Waka** is deployed at **[waka-six.vercel.app](https://waka-six.vercel.app)**
 
-**[Kiwaatule Sandbox Project — waka-six.vercel.app/share/kiwaatule-2030](https://waka-six.vercel.app/share/kiwaatule-2030?view=feed)** — a read-only public snapshot of the Nalubaga-Validate Community project, with the full graph view, claims feed, and map. The sandbox is for viewing and demonstration only — you cannot write to Waka, expand resources, or download attachments from it. All data shown is from a real project under active development.
+**[Kiwaatule Sandbox Project — waka-six.vercel.app/share/kiwaatule-wetland-record](https://waka-six.vercel.app/share/kiwaatule-wetland-record?view=feed)** — a read-only public view of *Kiwaatule — Securing a Neighbourhood Wetland*: 34 claims carried by 81 evidence resources, recording how residents of Kiwaatule in Kampala documented the condition of the Nalubaaga wetland, constituted a cooperative that converts land area into voting weight, seated the wetland itself as a member, and voted its first restoration priority. Browse it as a feed or as a graph; every claim opens to the minutes, bylaws, photographs and field notes it rests on. The sandbox is for viewing and demonstration only — you cannot write to Waka, expand resources, or download attachments from it. All data shown is from a real project under active development.
 
 Six longer walkthroughs (~5 minutes each):
 

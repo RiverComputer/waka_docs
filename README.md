@@ -14,7 +14,7 @@ The fastest picture of what the system does, end to end.
 
 ## Read more
 
-- **[River Computer — Pools Memo](https://app.notion.com/p/River-Computer-Pools-3d81c6b25aae80d0aae0d598e24c64e4)**
+- **[River Computer — Pools Memo](https://internal-frown-ca3.notion.site/River-Computer-Pools-3d81c6b25aae80d0aae0d598e24c64e4)**
 - **[Waka Conceptual Position](./CONCEPTUAL_POSITION.md)** — what Waka is, who it is for, and the principles behind it.
 - **[Waka Technical Position](./TECHNICAL_POSITION.md)** — the open standards Waka is built on (DIDs, Verifiable Credentials, the Hypercerts v2 lexicon space), the three-layer architecture and the claims engine internals, and the codebase architecture and developer setup.
 

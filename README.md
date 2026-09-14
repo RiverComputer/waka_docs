@@ -14,11 +14,12 @@ The fastest picture of what the system does, end to end.
 
 ## Read more
 
+- **[River Computer — Pools Memo](https://app.notion.com/p/River-Computer-Pools-3d81c6b25aae80d0aae0d598e24c64e4)**
 - **[Waka Conceptual Position](./CONCEPTUAL_POSITION.md)** — what Waka is, who it is for, and the principles behind it.
 - **[Waka Technical Position](./TECHNICAL_POSITION.md)** — the open standards Waka is built on (DIDs, Verifiable Credentials, the Hypercerts v2 lexicon space), the three-layer architecture and the claims engine internals, and the codebase architecture and developer setup.
 
 ---
 
-Waka is deployed at **[waka-six.vercel.app](https://waka-six.vercel.app)** · public sandbox: **[Kiwaatule 2030](https://waka-six.vercel.app/share/kiwaatule-2030?view=feed)**
+Waka is deployed at **[waka-six.vercel.app](https://waka-six.vercel.app)** · public sandbox: **[Kiwaatule — Securing a Neighbourhood Wetland](https://waka-six.vercel.app/share/kiwaatule-wetland-record?view=feed)**
 
 *Waka is a working name.*

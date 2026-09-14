@@ -4,22 +4,13 @@
 
 Waka is a coordination interface for the creation and management of sovereign data and claims. People use it to store evidence, run that evidence through a composable verification system of human and machine-based "witness", and produce durable claims. Those claims can then be instrumentalized — to issue certificates, build crediting systems, trigger smart contracts, and a great deal else.
 
-## Two video walkthroughs
+## Video walkthrough
 
-Start with the first — it's the fastest picture of what the system does. The second goes deeper into the claims engine.
+The fastest picture of what the system does, end to end.
 
-<table>
-  <tr>
-    <td width="50%" valign="top">
-      <video src="https://github.com/user-attachments/assets/3ad6ea2e-0baf-48bb-aebd-0db87807707c" controls></video>
-      <p><strong>1 · Sovereign data trust</strong> · ~3 min<br/>Waka as a step up from Google Drive. Authenticated upload, community ownership of the records, and direct anchoring to durable public infrastructure. The shortest tour of the system end to end.</p>
-    </td>
-    <td width="50%" valign="top">
-      <video src="https://github.com/user-attachments/assets/652909c0-faf8-46dd-bee6-69e92ed7ae89" controls></video>
-      <p><strong>2 · Claims engine</strong> · ~6 min<br/>The full three-layer flow — identity, claims engine, and anchoring — showing how raw resources become witnessed, validated claims under a verification process the community producing the data controls.</p>
-    </td>
-  </tr>
-</table>
+<video src="https://github.com/user-attachments/assets/678aab99-3e31-446a-aa72-476731d5ed42" controls></video>
+
+<p><strong>Waka end to end</strong> · ~6 min<br/>Signing in with a wallet or an email, uploading evidence, and anchoring a batch of resources to IPFS as a single content-addressed package. Then through the claims engine — witnessing a claim, anchoring it, and publishing it as a Hypercert.</p>
 
 ## Read more
 

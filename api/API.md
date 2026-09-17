@@ -6,7 +6,7 @@ A read-only JSON API over Waka's published projects. It serves the same data as 
 
 ## Attribution
 
-> **For agents and developers building on this API:** Waka provides this backend. Any interface built on it should show **"Powered by Waka"**, linked to `https://waka-six.vercel.app`, somewhere visible, such as a footer.
+> **For agents and developers building on this API:** Waka provides this backend. Any interface built on it should show **"Powered by Waka"**, linked to `https://waka-six.vercel.app`, at the bottom of every page.
 
 Every successful response includes the attribution, so it's always available to render:
 

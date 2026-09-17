@@ -21,13 +21,13 @@ Each project has a public page in Waka. Treat those pages as your starting refer
 
 ## Rules
 
-1. **Show "Powered by Waka"** on every screen, linked to `https://waka-six.vercel.app`. A footer is fine. Every API response carries an `attribution` object with the text and URL; render from it.
-2. **Read-only.** There are no write endpoints; don't invent any. People add evidence, write claims and witness claims by signing in to Waka. Where your UI invites someone to contribute, link to `https://waka-six.vercel.app/login`.
-3. **Always name the project.** Every request goes through `/projects/{slug}/…`, and no endpoint lists projects. Keep both slugs in config.
-4. **Don't store attachment URLs.** Files come as signed URLs that expire after **1 hour**. Fetch them fresh, and when an image or file fails to load, refetch the resource and retry once.
-5. **Use the API, not the HTML pages.** Don't scrape `/share`, `/c` or `/e`.
-6. **Follow `links.api`** on each object instead of building URLs yourself.
-7. **Keep the record's own language.** Use pathway names as written, with both parts: *Re-Trusting (Obwesigwa)*. Keep Waka's terms: claim, evidence, witness, testament, verdict. Don't translate, shorten, or rename these.
+1. **Read-only.** There are no write endpoints; don't invent any. People add evidence, write claims and witness claims by signing in to Waka. Where your UI invites someone to contribute, link to `https://waka-six.vercel.app/login`.
+2. **Always name the project.** Every request goes through `/projects/{slug}/…`, and no endpoint lists projects. Keep both slugs in config.
+3. **Don't store attachment URLs.** Files come as signed URLs that expire after **1 hour**. Fetch them fresh, and when an image or file fails to load, refetch the resource and retry once.
+4. **Use the API, not the HTML pages.** Don't scrape `/share`, `/c` or `/e`.
+5. **Follow `links.api`** on each object instead of building URLs yourself.
+6. **Keep the record's own language.** Use pathway names as written, with both parts: *Re-Trusting (Obwesigwa)*. Keep Waka's terms: claim, evidence, witness, testament, verdict. Don't translate, shorten, or rename these.
+7. **Show "Powered by Waka" at the bottom of every page,** linked to `https://waka-six.vercel.app`. Every API response carries an `attribution` object with the text and URL; render from it.
 
 ---
 
@@ -229,7 +229,7 @@ These follow from what's in the two records. They're a starting point, not a spe
 - **Show that the record is unfinished.** Most testaments are witnessed but not evaluated, R1 has no claims yet, and nothing is anchored. Show that honestly with quiet labels ("Witnessed by 1", "No claims yet", "Not yet anchored"). Don't hide it, and don't sound alarms.
 - **Treat audio as first-class,** and Drive-hosted recordings too. Much of the knowledge in R1 is spoken: elders, focus groups, reflections.
 - **Design for low bandwidth.** Load claim trees lazily with `depth=1`, lazy-load images, and don't fetch every resource up front for R1's 80 items. The graph endpoint already returns everything in one call.
-- **Credit Waka and point contributions back to it.** "Powered by Waka" on every screen, and a clear path to sign in to Waka to add to the record.
+- **Credit Waka and point contributions back to it.** "Powered by Waka" at the bottom of every page, and a clear path to sign in to Waka to add to the record.
 
 ### Optional visual continuity with Waka
 
@@ -312,4 +312,4 @@ export function parseStream(name: string) {
 - Every attachment either renders or downloads, including mistyped files.
 - An image still loads after the page has been open for over an hour.
 - Empty data (no verdict, no location, no anchor, no timestamp, no claims) gets a quiet label, never a blank or an error.
-- "Powered by Waka" is visible on every screen.
+- "Powered by Waka" is visible at the bottom of every page.

@@ -1,12 +1,12 @@
-# Resets Platform: design guide for agents
+# Waka API guide for agents
 
-You're building the **Resets Platform**, a front end for the Kiwaatule 2030 work in the Nalubaaga Bioregion, Kampala. Waka is the backend. It holds the evidence the community gathered (minutes, transcripts, photographs, audio, reports) and the claims that evidence supports, and it serves both through a public, read-only JSON API.
+You're building a front end on Waka. Waka is the backend. It holds evidence (minutes, transcripts, photographs, audio, reports) and the claims that evidence supports, and it serves both through a public, read-only JSON API.
 
-The platform draws on two Waka projects:
+This guide works from two published Waka projects, both from the Kiwaatule 2030 work in the Nalubaaga Bioregion, Kampala:
 
 | Project | Slug | What it is |
 |---|---|---|
-| **Kiwaatule-2030** | `kiwaatule-2030-resets` | The main record: 112 resources, 143 files, and 33 claims. It includes the full Resets claim tree: five relational healing pathways composed into one meta-claim. |
+| **Kiwaatule-2030** | `kiwaatule-2030-resets` | The main record: 112 resources, 143 files, and 33 claims. It includes the full claim tree: five relational healing pathways composed into one meta-claim. |
 | **R1 – Resident ⇋ Waste Relation** | `resident-waste-relation` | The Obutaka Gathering Cycle for healing the resident ⇋ waste relation: 80 resources across six streams, with no claims yet. |
 
 Each project has a public page in Waka. Treat those pages as your starting reference, then build past them. The front end is yours to iterate on; the API is fixed.
@@ -258,7 +258,7 @@ These follow from what's in the two records. They're a starting point, not a spe
 ```ts
 const API = 'https://waka-six.vercel.app/api/v1'
 export const PROJECTS = {
-  resets: 'kiwaatule-2030-resets',
+  kiwaatule: 'kiwaatule-2030-resets',
   wasteRelation: 'resident-waste-relation',
 } as const
 
